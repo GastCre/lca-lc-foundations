@@ -1,4 +1,7 @@
 # %% Loading environment variables
+import base64
+from IPython.display import display
+from ipywidgets import FileUpload
 from langgraph.checkpoint.memory import InMemorySaver
 from tavily import TavilyClient
 from typing import Dict, Any
@@ -8,9 +11,6 @@ from langchain.agents import create_agent
 from dotenv import load_dotenv
 
 load_dotenv()
-
-# %%
-
 # %% First we create the agent tool
 tavily_client = TavilyClient()
 
@@ -46,4 +46,33 @@ response = agent.invoke({'messages': [message]},
 # %%
 print(response['messages'][-1].content, end='\n\n')
 
+# %% Now we add multimodality (just images for now).
+
+# Image uploader widget
+
+uploader = FileUpload(accept='.png', multiple=False)
+display(uploader)
+
+# Base64 encoding of the image
+
+# Get the first (and only) uploaded file dict
+uploaded_file = uploader.value[0]
+
+# This is a memoryview
+content_mv = uploaded_file["content"]
+
+# Convert memoryview -> bytes
+img_bytes = bytes(content_mv)  # or content_mv.tobytes()
+
+# Now base64 encode
+img_b64 = base64.b64encode(img_bytes).decode("utf-8")
+
+# Multimodal message with text and image
+multimodal_message = HumanMessage(content={'type': 'message', 'text': message.content},
+                                  {'type': 'image', 'base64': img_b64,
+                                      'mime_type': 'image/png'}
+                                  )
+response = agent.invoke({'messages': [multimodal_message]},
+                        config=config)
+print(response['messages'][-1].content, end='\n\n')
 # %%
