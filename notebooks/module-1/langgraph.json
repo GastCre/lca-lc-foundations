@@ -1,7 +1,7 @@
 {
     "dependencies": ["."],
     "graphs": {
-        "agent": "./1.5_personal_chef.py:agent"
+        "agent": "/Users/gastoncrecikeinbaum/Documents/Data Science/Courses/Langchain/lca-lc-foundations/notebooks/module-1/personal_chef_project_agent.py:agent"
     },
-    "env": "../../.env"
+    "env": "/Users/gastoncrecikeinbaum/Documents/Data Science/Courses/Langchain/lca-lc-foundations/.env"
   }
